@@ -53,6 +53,7 @@ function tryAutofill() {
 
 // Detect form submission and extract credentials
 document.addEventListener("submit", (event) => {
+  console.log("Login Submit Event");
   const form = event.target as HTMLFormElement;
   const formData = new FormData(form);
 
@@ -60,6 +61,7 @@ document.addEventListener("submit", (event) => {
   const password = formData.get("password");
 
   if (username && password) {
+    console.log("Login Submit Field Done");
     chrome.runtime.sendMessage({
       type: "PROMPT_SAVE_CREDENTIALS",
       data: {
