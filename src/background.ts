@@ -18,7 +18,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   if (msg.type === "PROMPT_SAVE_CREDENTIALS") {
     chrome.notifications.create({
       type: "basic",
-      iconUrl: "icons/icon128.png",
+      iconUrl: chrome.runtime.getURL("icons/icon128.png"),
       title: "Save Login?",
       message: `Save login for ${msg.data.website}?`,
       buttons: [{ title: "Save" }],

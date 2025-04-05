@@ -13,8 +13,8 @@ export default defineConfig({
     rollupOptions: {
       input: {
         popup: resolve(__dirname, "index.html"),
-        content: resolve(__dirname, "src/content-script.ts"),
         background: resolve(__dirname, "src/background.ts"),
+        content: resolve(__dirname, "src/content-script.ts"),
       },
       output: {
         entryFileNames: "assets/[name].js",
@@ -24,5 +24,6 @@ export default defineConfig({
     },
     outDir: "dist",
     emptyOutDir: true,
+    // target: "esnext",
   },
 });
