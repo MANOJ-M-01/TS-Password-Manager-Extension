@@ -25,7 +25,7 @@ export const setupUser = async (
   const secret = await deriveSecretKey(password, key);
 
   return new Promise((resolve) => {
-    storage.set({ vaultUser: { username, key, secret: secret.secret } }, () => {
+    storage.set({ vaultUser: { username, secret: secret.secret } }, () => {
       sessionStorage.setItem("vaultSecret", secret.secret);
       resolve(key);
     });
