@@ -58,3 +58,17 @@ export async function decrypt(base64: string): Promise<string> {
 
   return decoder.decode(decrypted);
 }
+
+export async function deriveSecretKey(password: string, key: string) {
+  const encoder = new TextEncoder();
+  const base = encoder.encode(password + key);
+
+  const hashBuffer = await crypto.subtle.digest("SHA-256", base);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  const hex = hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
+
+  return {
+    secret: hex.slice(0, 32),
+    salt: hex.slice(32, 64),
+  };
+}
