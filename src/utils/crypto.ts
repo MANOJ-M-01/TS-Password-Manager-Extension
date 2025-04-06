@@ -1,13 +1,11 @@
+import { CRYPTO_SECRET, CRYPTO_SALT } from "../config";
 const encoder = new TextEncoder();
 const decoder = new TextDecoder();
-
-// Use a fixed key for demo/testing — replace with real user-derived key later
-const SECRET = "very-secure-master-password";
 
 async function getKey(): Promise<CryptoKey> {
   const keyMaterial = await crypto.subtle.importKey(
     "raw",
-    encoder.encode(SECRET),
+    encoder.encode(CRYPTO_SECRET),
     { name: "PBKDF2" },
     false,
     ["deriveKey"]
@@ -16,7 +14,7 @@ async function getKey(): Promise<CryptoKey> {
   return crypto.subtle.deriveKey(
     {
       name: "PBKDF2",
-      salt: encoder.encode("some-salt"), // use user-specific salt in production
+      salt: encoder.encode(CRYPTO_SALT),
       iterations: 100000,
       hash: "SHA-256",
     },

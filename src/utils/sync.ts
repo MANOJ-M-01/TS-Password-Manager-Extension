@@ -10,6 +10,8 @@ export const syncToChromeStorage = async () => {
       website: item.website,
       username: item.username,
       password: await decrypt(item.password),
+      group: item.password,
+      note: item.note,
     }))
   );
 

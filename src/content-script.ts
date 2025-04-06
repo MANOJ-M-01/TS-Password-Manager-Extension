@@ -2,7 +2,7 @@ import { VaultItem } from "./types";
 
 console.log("[PasswordManager] Content script loaded");
 
-// Helper to autofill fields
+// Autofill helper
 function fillInput(input: HTMLInputElement | null, value: string) {
   if (!input) return;
   input.focus();
@@ -10,32 +10,46 @@ function fillInput(input: HTMLInputElement | null, value: string) {
   input.dispatchEvent(new Event("input", { bubbles: true }));
 }
 
-function addIconToField(input: HTMLInputElement, onClick: () => void) {
-  const icon = document.createElement("img");
-  icon.src =
-    "https://www.iconfinder.com/static/img/favicons/favicon-194x194.png?bf2736d2f8";
+// Inline icon injection
+function addInlineIcon(input: HTMLInputElement, type: "username" | "password") {
+  const icon = document.createElement("span");
+  icon.innerText = "🔐";
+  icon.title = "Fill from Password Manager";
   icon.style.position = "absolute";
   icon.style.right = "8px";
   icon.style.top = "50%";
   icon.style.transform = "translateY(-50%)";
   icon.style.cursor = "pointer";
-  icon.style.width = "16px";
-  icon.style.height = "16px";
+  icon.style.fontSize = "16px";
   icon.style.zIndex = "1000";
-
-  icon.addEventListener("click", onClick);
 
   const wrapper = document.createElement("div");
   wrapper.style.position = "relative";
   wrapper.style.display = "inline-block";
   wrapper.style.width = `${input.offsetWidth}px`;
 
-  input.parentElement?.insertBefore(wrapper, input);
-  wrapper.appendChild(input);
-  wrapper.appendChild(icon);
+  const parent = input.parentElement;
+  if (parent) {
+    parent.insertBefore(wrapper, input);
+    wrapper.appendChild(input);
+    wrapper.appendChild(icon);
+  }
+
+  icon.addEventListener("click", () => {
+    chrome.runtime.sendMessage({ type: "REQUEST_VAULT" }, (response) => {
+      const currentDomain = window.location.hostname;
+      const match = response?.data.find((entry: VaultItem) =>
+        currentDomain.includes(entry.website)
+      );
+      if (match) {
+        if (type === "username") fillInput(input, match.username);
+        else fillInput(input, match.password);
+      }
+    });
+  });
 }
 
-// Try to autofill if login form is detected
+// Main autofill logic
 function tryAutofill() {
   const usernameField = document.querySelector<HTMLInputElement>(
     'input[type="email"], input[name*=user], input[name*=email]'
@@ -74,25 +88,14 @@ function tryAutofill() {
       }
     });
 
-    // Inject icon in username field to trigger autofill manually
-    addIconToField(usernameField, () => {
-      chrome.runtime.sendMessage({ type: "REQUEST_VAULT" }, (response) => {
-        const currentDomain = window.location.hostname;
-        const match = response?.data.find((entry: VaultItem) =>
-          currentDomain.includes(entry.website)
-        );
-        if (match) {
-          fillInput(usernameField, match.username);
-          fillInput(passwordField, match.password);
-        }
-      });
-    });
+    // Inject inline icons for manual trigger
+    addInlineIcon(usernameField, "username");
+    addInlineIcon(passwordField, "password");
   }
 }
 
-// Detect form submission and extract credentials
+// Listen to form submission for save prompt
 document.addEventListener("submit", (event) => {
-  console.log("Login Submit Event");
   const form = event.target as HTMLFormElement;
   const formData = new FormData(form);
 
@@ -100,7 +103,6 @@ document.addEventListener("submit", (event) => {
   const password = formData.get("password");
 
   if (username && password) {
-    console.log("Login Submit Field Done");
     chrome.runtime.sendMessage({
       type: "PROMPT_SAVE_CREDENTIALS",
       data: {
@@ -112,10 +114,7 @@ document.addEventListener("submit", (event) => {
   }
 });
 
-window.addEventListener("load", () => {
-  setTimeout(tryAutofill, 500); // slight delay helps
-});
-
+// Padding override to make room for the icon
 const style = document.createElement("style");
 style.textContent = `
   input {
@@ -123,3 +122,7 @@ style.textContent = `
   }
 `;
 document.head.appendChild(style);
+
+window.addEventListener("load", () => {
+  setTimeout(tryAutofill, 500); // slight delay for inputs to load
+});
