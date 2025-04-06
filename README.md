@@ -1,39 +1,89 @@
-### System requirements
+# 🔐 TS Password Manager Extension
 
-- Node v23.11.0
+A secure, modern password manager Chrome extension built with **TypeScript**, **React**, and **Vite**, featuring **military-grade encryption**, grouped vaults, secure notes, inline icons, and cloud sync support.
 
-### Reference
+---
 
-- https://alexleybourne.github.io/chrome-extension-icon-generator/
+## 🚀 Features
 
-### Notes
+- AES-GCM encryption using credentials-derived keys
+- Password grouping & search functionality
+- Secure notes
+- Unlock screen on every browser restart
+- Autofill icons and password visibility toggle
+- Chrome storage sync
+- ✍️ Supports dark mode, keyboard shortcuts, and more
 
-- ✅ Your encryption, IndexedDB storage, etc., are all working fine.
-- 🚫 But `chrome.storage.local` only exists when your code is executed **inside the extension environment** (i.e., after loading it from `chrome://extensions`).
+---
 
-### ✅ How to See `chrome.storage.local` Work
+## 🛠 System Requirements
 
-To test syncing with `chrome.storage.local`, follow these steps:
+- **Node.js** v23.11.0 or later
+- Modern browser (Chrome-based)
 
-#### 1. Run a build
+---
+
+## 📦 Development Setup
+
+### Install dependencies
+
+```bash
+npm install
+```
+
+### Run in development mode
+
+```bash
+npm run dev
+```
+
+> Opens the extension as a webpage for development, but `chrome.storage.local` won’t work here.
+
+---
+
+## 🧪 How to Test `chrome.storage.local` (Actual Extension Behavior)
+
+To properly test features like syncing and unlock security, you must load the **production build** in Chrome:
+
+### 1. Build the extension
 
 ```bash
 npm run build
 ```
 
-#### 2. Open Chrome Extensions
+### 2. Open Chrome Extensions
 
 Go to:  
 `chrome://extensions`
 
-#### 3. Enable Developer Mode (toggle top right)
+### 3. Enable Developer Mode
 
-#### 4. Click "Load unpacked"
+Toggle it in the top right corner.
 
-Then **select the `dist/` folder** from your project.
+### 4. Load the unpacked extension
 
-> Make sure it contains the built files like `index.html`, `assets/`, `manifest.json`, etc.
+Click **"Load unpacked"** and select the `dist/` folder (generated from `npm run build`).
 
-#### 5. Click on your extension’s popup (icon next to the address bar)
+Ensure it contains:
+- `index.html`
+- `assets/` folder
+- `manifest.json`
 
-Click **“TS Password Manager”** — now you should see: the Login page
+### 5. Use the Extension
+
+Click the extension icon (🔐) in Chrome.  
+You should now see the **setup or unlock screen**.
+
+---
+
+## 🔗 Reference
+
+- Chrome Extension Icon Generator  
+  https://alexleybourne.github.io/chrome-extension-icon-generator/
+
+---
+
+## ⚠ Notes
+
+- ✅ **Encryption, session unlocking, and vault storage** work as expected.
+- 🚫 **`chrome.storage.local` is only accessible** inside the Chrome Extension environment — not in dev server mode.
