@@ -2,13 +2,14 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import { resolve } from "path";
 import { fileURLToPath } from "url";
+import tailwindcss from "@tailwindcss/vite";
 
 // ESM fix for __dirname
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = resolve(__filename, "..");
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), tailwindcss()],
   build: {
     rollupOptions: {
       input: {
