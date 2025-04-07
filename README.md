@@ -80,7 +80,9 @@ You should now see the **setup or unlock screen**.
 
 - Chrome Extension Icon Generator  
   https://alexleybourne.github.io/chrome-extension-icon-generator/
-
+- TailwindCSS 4 setup in vite
+  https://medium.com/@npguapo/installation-of-tailwind-vite-react-javascript-or-typescript-ec1abdfa56b2
+  
 ---
 
 ## ⚠ Notes
