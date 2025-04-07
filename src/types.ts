@@ -1,7 +1,7 @@
 export interface VaultItem {
   id: string;
   website: string;
-  username: string;
+  email: string;
   password: string;
   group?: string;
   note?: string;

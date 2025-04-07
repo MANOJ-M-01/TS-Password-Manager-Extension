@@ -11,7 +11,7 @@ function fillInput(input: HTMLInputElement | null, value: string) {
 }
 
 // Inline icon injection
-function addInlineIcon(input: HTMLInputElement, type: "username" | "password") {
+function addInlineIcon(input: HTMLInputElement, type: "email" | "password") {
   const icon = document.createElement("span");
   icon.innerText = "🔐";
   icon.title = "Fill from Password Manager";
@@ -42,7 +42,7 @@ function addInlineIcon(input: HTMLInputElement, type: "username" | "password") {
         currentDomain.includes(entry.website)
       );
       if (match) {
-        if (type === "username") fillInput(input, match.username);
+        if (type === "email") fillInput(input, match.email);
         else fillInput(input, match.password);
       }
     });
@@ -51,14 +51,14 @@ function addInlineIcon(input: HTMLInputElement, type: "username" | "password") {
 
 // Main autofill logic
 function tryAutofill() {
-  const usernameField = document.querySelector<HTMLInputElement>(
+  const emailField = document.querySelector<HTMLInputElement>(
     'input[type="email"], input[name*=user], input[name*=email]'
   );
   const passwordField = document.querySelector<HTMLInputElement>(
     'input[type="password"]'
   );
 
-  if (usernameField && passwordField) {
+  if (emailField && passwordField) {
     chrome.runtime.sendMessage({ type: "REQUEST_VAULT" }, (response) => {
       console.log("[PasswordManager] Vault response:", response);
 
@@ -71,7 +71,7 @@ function tryAutofill() {
         );
 
         if (matchingEntry) {
-          fillInput(usernameField, matchingEntry.username);
+          fillInput(emailField, matchingEntry.email);
           fillInput(passwordField, matchingEntry.password);
           console.log(
             "[PasswordManager] Autofilled from vault:",
@@ -89,7 +89,7 @@ function tryAutofill() {
     });
 
     // Inject inline icons for manual trigger
-    addInlineIcon(usernameField, "username");
+    addInlineIcon(emailField, "email");
     addInlineIcon(passwordField, "password");
   }
 }
@@ -107,7 +107,7 @@ document.addEventListener("submit", (event) => {
       type: "PROMPT_SAVE_CREDENTIALS",
       data: {
         website: window.location.hostname,
-        username: username.toString(),
+        email: username.toString(),
         password: password.toString(),
       },
     });

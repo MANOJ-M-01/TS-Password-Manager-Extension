@@ -39,7 +39,7 @@ chrome.notifications.onButtonClicked.addListener(async (notifId, btnIdx) => {
       const newItem = {
         id: uuidv4(),
         website: _pendingSave.website,
-        username: _pendingSave.username,
+        email: _pendingSave.email,
         password: await encrypt(_pendingSave.password),
       };
 

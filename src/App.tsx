@@ -30,9 +30,12 @@ export default App;
 
 const VaultBox = ({ onLogout }: { onLogout: () => void }) => {
   return (
-    <div className="w-96 p-4 text-sm">
-      <div className="flex justify-between items-center mb-2">
-        <h1 className="text-xl font-bold">🔐 Vault</h1>
+    <div className="w-full p-4 text-sm">
+      <div className="flex justify-between items-center align-center mb-6">
+        <div className="flex items-center text-2xl font-semibold text-gray-900 dark:text-white">
+          <img className="w-8 h-8 mr-2" src="/logo.svg" alt="logo" />
+          TS Vault
+        </div>
         <button
           onClick={onLogout}
           className="bg-red-600 text-white text-xs px-2 py-1 rounded"

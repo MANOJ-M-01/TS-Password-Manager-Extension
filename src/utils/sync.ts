@@ -8,7 +8,7 @@ export const syncToChromeStorage = async () => {
     items.map(async (item) => ({
       id: item.id,
       website: item.website,
-      username: item.username,
+      email: item.email,
       password: await decrypt(item.password),
       group: item.password,
       note: item.note,

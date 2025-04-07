@@ -12,7 +12,7 @@ A secure, modern password manager Chrome extension built with **TypeScript**, **
 - Unlock screen on every browser restart
 - Autofill icons and password visibility toggle
 - Chrome storage sync
-- ✍️ Supports dark mode, keyboard shortcuts, and more
+- Supports dark mode
 
 ---
 
@@ -80,9 +80,7 @@ You should now see the **setup or unlock screen**.
 
 - Chrome Extension Icon Generator  
   https://alexleybourne.github.io/chrome-extension-icon-generator/
-- TailwindCSS 4 setup in vite
-  https://medium.com/@npguapo/installation-of-tailwind-vite-react-javascript-or-typescript-ec1abdfa56b2
-  
+
 ---
 
 ## ⚠ Notes

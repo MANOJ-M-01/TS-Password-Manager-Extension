@@ -19,7 +19,7 @@ function Vault() {
   >({});
   const [newEntry, setNewEntry] = useState({
     website: "",
-    username: "",
+    email: "",
     password: "",
     group: "",
     note: "",
@@ -36,16 +36,17 @@ function Vault() {
     setVault(decrypted);
   };
 
-  const handleAdd = async () => {
-    if (!newEntry.website || !newEntry.username || !newEntry.password) {
-      alert("Website, username, and password are required.");
+  const handleAdd = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!newEntry.website || !newEntry.email || !newEntry.password) {
+      alert("Website, email, and password are required.");
       return;
     }
 
     const newItem: VaultItem = {
       id: uuidv4(),
       website: newEntry.website,
-      username: newEntry.username,
+      email: newEntry.email,
       password: await encrypt(newEntry.password),
       group: newEntry.group,
       note: newEntry.note,
@@ -55,7 +56,7 @@ function Vault() {
     await syncToChromeStorage();
     setNewEntry({
       website: "",
-      username: "",
+      email: "",
       password: "",
       group: "",
       note: "",
@@ -73,20 +74,20 @@ function Vault() {
 
   const handleEdit = async (item: VaultItem) => {
     const updatedWebsite = prompt("Edit website", item.website);
-    const updatedUsername = prompt("Edit username", item.username);
+    const updatedEmail = prompt("Edit email", item.email);
     const updatedPassword = prompt("Edit password", item.password);
     const updatedGroup = prompt("Edit group", item.group || "");
     const updatedNote = prompt("Edit note", item.note || "");
 
     if (
       updatedWebsite !== null &&
-      updatedUsername !== null &&
+      updatedEmail !== null &&
       updatedPassword !== null
     ) {
       const updatedItem: VaultItem = {
         ...item,
         website: updatedWebsite,
-        username: updatedUsername,
+        email: updatedEmail,
         password: await encrypt(updatedPassword),
         group: updatedGroup || "",
         note: updatedNote || "",
@@ -113,7 +114,7 @@ function Vault() {
   const filteredVault = vault.filter(
     (item) =>
       item.website.toLowerCase().includes(search.toLowerCase()) ||
-      item.username.toLowerCase().includes(search.toLowerCase()) ||
+      item.email.toLowerCase().includes(search.toLowerCase()) ||
       (item.group && item.group.toLowerCase().includes(search.toLowerCase()))
   );
 
@@ -125,92 +126,114 @@ function Vault() {
   }, {} as Record<string, VaultItem[]>);
 
   return (
-    <div className="w-96 p-4 text-sm">
-      {/* <h1 className="text-xl font-bold mb-2">🔐 Vault</h1> */}
+    <div className="w-full p-4 text-sm">
+      <div className="space-y-2 mb-8">
+        <form className="space-y-4 md:space-y-6" onSubmit={handleAdd}>
+          <div>
+            <input
+              type="text"
+              placeholder="Website"
+              value={newEntry.website}
+              onChange={(e) =>
+                setNewEntry({ ...newEntry, website: e.target.value })
+              }
+              className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            />
+          </div>
+          <div>
+            <input
+              type="text"
+              placeholder="Email"
+              value={newEntry.email}
+              onChange={(e) =>
+                setNewEntry({ ...newEntry, email: e.target.value })
+              }
+              className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            />
+          </div>
+          <div>
+            <input
+              type="password"
+              placeholder="Password"
+              value={newEntry.password}
+              onChange={(e) =>
+                setNewEntry({ ...newEntry, password: e.target.value })
+              }
+              className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            />
+          </div>
+          <div>
+            <input
+              type="text"
+              placeholder="Group (optional)"
+              value={newEntry.group}
+              onChange={(e) =>
+                setNewEntry({ ...newEntry, group: e.target.value })
+              }
+              className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            />
+          </div>
+          <div>
+            <textarea
+              placeholder="Secure Note (optional)"
+              value={newEntry.note}
+              onChange={(e) =>
+                setNewEntry({ ...newEntry, note: e.target.value })
+              }
+              className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              rows={2}
+            />
+          </div>
+          <div>
+            <button
+              type="submit"
+              className="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+            >
+              Add Entry
+            </button>
+          </div>
+        </form>
+      </div>
 
-      <input
-        type="text"
-        placeholder="Search..."
-        className="w-full mb-3 p-2 border rounded"
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-      />
-
-      <div className="space-y-2 mb-4">
+      <div className="mb-4">
         <input
           type="text"
-          placeholder="Website"
-          value={newEntry.website}
-          onChange={(e) =>
-            setNewEntry({ ...newEntry, website: e.target.value })
-          }
-          className="w-full px-2 py-1 border rounded"
+          placeholder="Search..."
+          className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
         />
-        <input
-          type="text"
-          placeholder="Username"
-          value={newEntry.username}
-          onChange={(e) =>
-            setNewEntry({ ...newEntry, username: e.target.value })
-          }
-          className="w-full px-2 py-1 border rounded"
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          value={newEntry.password}
-          onChange={(e) =>
-            setNewEntry({ ...newEntry, password: e.target.value })
-          }
-          className="w-full px-2 py-1 border rounded"
-        />
-        <input
-          type="text"
-          placeholder="Group (optional)"
-          value={newEntry.group}
-          onChange={(e) => setNewEntry({ ...newEntry, group: e.target.value })}
-          className="w-full px-2 py-1 border rounded"
-        />
-        <textarea
-          placeholder="Secure Note (optional)"
-          value={newEntry.note}
-          onChange={(e) => setNewEntry({ ...newEntry, note: e.target.value })}
-          className="w-full px-2 py-1 border rounded"
-          rows={2}
-        />
-        <button
-          className="bg-blue-600 text-white px-3 py-1 rounded w-full"
-          onClick={handleAdd}
-        >
-          ➕ Add Entry
-        </button>
       </div>
 
       {Object.keys(grouped).map((group) => (
         <div key={group} className="mb-4">
-          <h2 className="font-semibold text-gray-700 mb-1">📂 {group}</h2>
+          <h2 className="font-semibold text-gray-700 mb-1 dark:text-white">
+            📂 {group}
+          </h2>
           {grouped[group].map((item) => (
             <div
               key={item.id}
-              className="mb-2 border rounded p-2 bg-white shadow"
+              className="mb-2 mt-2 border rounded p-2 bg-white shadow bg-gray-50 border border-gray-300 text-gray-900 dark:bg-gray-700 dark:text-white"
             >
-              <div className="flex justify-between">
+              <div className="flex justify-between mb-2">
                 <div className="font-semibold">{item.website}</div>
                 <div className="flex gap-2">
                   <Edit
                     size={16}
-                    className="cursor-pointer text-blue-600"
+                    className="cursor-pointer text-blue-600 dark:text-white"
                     onClick={() => handleEdit(item)}
                   />
                   <Trash
                     size={16}
-                    className="cursor-pointer text-red-600"
+                    className="cursor-pointer text-red-600 dark:text-red-500"
                     onClick={() => handleDelete(item.id)}
                   />
                 </div>
               </div>
-              <div className="text-gray-600">{item.username}</div>
-              <div className="flex items-center gap-2">
+              <div className="text-gray-600 dark:text-white  mb-2">
+                {item.email}
+              </div>
+              <div className="flex items-center gap-2  mb-2">
                 <input
                   className="bg-transparent border-none outline-none w-full"
                   type={showPasswordMap[item.id] ? "text" : "password"}
@@ -226,18 +249,18 @@ function Vault() {
                 ) : (
                   <Eye
                     size={16}
-                    className="cursor-pointer"
+                    className="cursor-pointer dark:text-white"
                     onClick={() => toggleVisibility(item.id)}
                   />
                 )}
                 <ClipboardCopy
                   size={16}
-                  className="cursor-pointer text-green-600"
+                  className="cursor-pointer text-green-600 dark:text-white"
                   onClick={() => handleCopy(item.password)}
                 />
               </div>
               {item.note && (
-                <div className="mt-1 text-xs text-gray-500 italic">
+                <div className="mt-1 text-xs text-gray-500 dark:text-white italic mb-2">
                   📝 {item.note}
                 </div>
               )}

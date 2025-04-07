@@ -16,7 +16,7 @@ export const isFirstTime = async (): Promise<boolean> => {
 };
 
 export const setupUser = async (
-  username: string,
+  email: string,
   password: string,
   key: string
 ): Promise<string> => {
@@ -25,7 +25,7 @@ export const setupUser = async (
   const secret = await deriveSecretKey(password, key);
 
   return new Promise((resolve) => {
-    storage.set({ vaultUser: { username, secret: secret.secret } }, () => {
+    storage.set({ vaultUser: { email, secret: secret.secret } }, () => {
       sessionStorage.setItem("vaultSecret", secret.secret);
       resolve(key);
     });
@@ -33,7 +33,7 @@ export const setupUser = async (
 };
 
 export const verifyUser = async (
-  username: string,
+  email: string,
   password: string,
   key: string
 ): Promise<boolean> => {
@@ -43,7 +43,7 @@ export const verifyUser = async (
     storage.get(["vaultUser"], async (result) => {
       const vaultUser = result.vaultUser;
 
-      if (!vaultUser || vaultUser.username !== username) {
+      if (!vaultUser || vaultUser.email !== email) {
         resolve(false);
         return;
       }
@@ -60,7 +60,7 @@ export const verifyUser = async (
 };
 
 export const getStoredUser = async (): Promise<{
-  username: string;
+  email: string;
   key: string;
 } | null> => {
   if (!storage) return null;
